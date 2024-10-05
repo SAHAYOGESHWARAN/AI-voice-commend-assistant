@@ -12,3 +12,14 @@ exports.verifyToken = (req, res, next) => {
         res.status(400).json({ message: 'Token is not valid' });
     }
 };
+
+const handleCommandSubmit = async (e) => {
+    e.preventDefault();
+    try {
+        const token = localStorage.getItem('token');
+        const res = await axios.post('/api/commands', { command }, { headers: { 'x-auth-token': token } });
+        setResponse(res.data.response);
+    } catch (err) {
+        console.error('Error in command submission', err);
+    }
+};
