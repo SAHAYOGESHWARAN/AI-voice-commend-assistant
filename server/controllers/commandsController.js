@@ -2,6 +2,8 @@ const { processCommand } = require('../services/nlpService');
 const { getWeather } = require('../services/weatherService');
 const { getLatestNews } = require('../services/newsService');
 const { detectIntent } = require('../services/dialogflowService');
+const { verifyToken } = require('../middleware/auth');
+const { processCommand } = require('../services/nlpService');
 
 
 exports.handleCommand = async (req, res) => {
@@ -47,3 +49,7 @@ exports.handleCommand = async (req, res) => {
         res.status(500).json({ message: 'Error processing command' });
     }
 };
+
+
+// Protect this route with JWT
+router.post('/', verifyToken, handleCommand);
