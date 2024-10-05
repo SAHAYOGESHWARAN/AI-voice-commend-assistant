@@ -12,7 +12,7 @@ const Register = () => {
             localStorage.setItem('token', res.data.token);
             setMessage('User registered successfully');
         } catch (err) {
-            setMessage('Registration failed');
+            setMessage('Registration failed.');
         }
     };
 
