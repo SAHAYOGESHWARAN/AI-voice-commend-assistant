@@ -4,6 +4,7 @@
     "axios": "^1.7.7",
     "bcryptjs": "^2.4.3",
     "dialogflow": "^1.2.0",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "nodemailer": "^6.9.15"
   }
 }
