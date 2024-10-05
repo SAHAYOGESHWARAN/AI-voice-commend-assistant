@@ -1,35 +1,58 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 
-function App() {
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const recognition = new SpeechRecognition();
+recognition.continuous = true;  // Enables continuous listening
+recognition.interimResults = true;
+
+const App = () => {
     const [command, setCommand] = useState('');
-    const [response, setResponse] = useState('');
+    const [listening, setListening] = useState(false);
 
-    const handleCommandSubmit = async (e) => {
-        e.preventDefault();
+    const startListening = () => {
+        setListening(true);
+        recognition.start();
+    };
+
+    const stopListening = () => {
+        setListening(false);
+        recognition.stop();
+    };
+
+    useEffect(() => {
+        recognition.onresult = (event) => {
+            const transcript = event.results[event.resultIndex][0].transcript;
+            setCommand(transcript);
+        };
+
+        recognition.onend = () => {
+            if (listening) recognition.start();  // Restart if still listening
+        };
+
+        return () => recognition.stop();
+    }, [listening]);
+
+    const handleCommandSubmit = async () => {
+        if (command.trim() === '') return;
+
         try {
             const res = await axios.post('/api/commands', { command });
-            setResponse(res.data.response);
-        } catch (err) {
-            console.error('Error in command submission', err);
+            console.log('AI Response:', res.data.response);
+            setCommand('');  // Reset command input after processing
+        } catch (error) {
+            console.error('Error processing command:', error);
         }
     };
 
     return (
-        <div className="App">
-            <h1>Jarvis AI Assistant</h1>
-            <form onSubmit={handleCommandSubmit}>
-                <input 
-                    type="text" 
-                    value={command} 
-                    onChange={(e) => setCommand(e.target.value)} 
-                    placeholder="Enter your command" 
-                />
-                <button type="submit">Send</button>
-            </form>
-            {response && <div className="response">{response}</div>}
+        <div>
+            <button onClick={startListening}>Start Listening</button>
+            <button onClick={stopListening}>Stop Listening</button>
+            <p>Listening: {listening ? 'ON' : 'OFF'}</p>
+            <p>Command: {command}</p>
+            <button onClick={handleCommandSubmit}>Submit Command</button>
         </div>
     );
-}
+};
 
 export default App;
