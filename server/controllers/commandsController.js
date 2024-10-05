@@ -1,6 +1,8 @@
 const { processCommand } = require('../services/nlpService');
 const { getWeather } = require('../services/weatherService');
 const { getLatestNews } = require('../services/newsService');
+const { detectIntent } = require('../services/dialogflowService');
+
 
 exports.handleCommand = async (req, res) => {
     try {
@@ -31,6 +33,15 @@ exports.handleCommand = async (req, res) => {
 
         // Fallback to general NLP service
         const response = await processCommand(command);
+        res.status(200).json({ response });
+    } catch (error) {
+        res.status(500).json({ message: 'Error processing command' });
+    }
+};
+exports.handleCommand = async (req, res) => {
+    try {
+        const { command } = req.body;
+        const response = await detectIntent(command);
         res.status(200).json({ response });
     } catch (error) {
         res.status(500).json({ message: 'Error processing command' });
