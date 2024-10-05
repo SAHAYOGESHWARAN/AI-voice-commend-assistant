@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@google-cloud/speech": "^6.7.0",
-    "axios": "^1.7.7"
+    "axios": "^1.7.7",
+    "dialogflow": "^1.2.0"
   }
 }
